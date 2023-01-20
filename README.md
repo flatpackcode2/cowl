@@ -12,7 +12,7 @@
  ```
         - user: admin
         - password: password
-        - server: cyberowl_db
-        - db: local_db
+        - server: db
+        - database: local_db
 
 ```
