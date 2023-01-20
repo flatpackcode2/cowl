@@ -9,12 +9,10 @@
 
 ## Testing and querying
 1. You can login to adminer to view and query the db at (http://localhost:8080). The details are as follows:
-        - user: root
-        - password: mypassword
-        - server: zuju_db
+ ```
+        - user: admin
+        - password: password
+        - server: cyberowl_db
         - db: local_db
-2. To query the fixtures listing, you may use the [Postman]() and query the server at the following url: `http://localhost:1337/fixture?page=<the page you want to query next>&limit=<number of entries to show in this page>`
-3. To run the unit tests, run `npm run test`
 
-## Description
-This sample project currently does not have any caching aside from the built in caching that mySQL has.
+```
