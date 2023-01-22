@@ -4,7 +4,8 @@ export const dbConfig = {
     PASSWORD: "password",
     DB: "local_db",
     dialect: "postgres",
-    port: 3306,
+    logging: console.log,
+    port: 5432,
     pool: {
         max: 5,
         min: 0,

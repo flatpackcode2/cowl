@@ -1,6 +1,6 @@
 import express, { ErrorRequestHandler } from "express";
-import path from 'path';
 import logger from 'morgan';
+const boardRouter = require('./api/routes/board');
 
 const app = express();
 const port = 1337
@@ -8,7 +8,6 @@ const port = 1337
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
 
 // error handler
 app.use(function (err, req, res, next) {
@@ -22,8 +21,11 @@ app.use(function (err, req, res, next) {
 } as ErrorRequestHandler);
 
 app.get('/', async (req, res) => {
+    console.log('rrrr')
     res.send('OK, this works, right?')
 })
+
+app.use('/new', boardRouter)
 
 app.listen(port, () => {
     console.log(`App running on port ${port}`)

@@ -1,32 +1,31 @@
-import { DataTypes, Model, Optional } from "sequelize";
+import { DataTypes, Model, Optional, Sequelize } from "sequelize";
 import { Json } from "sequelize/types/utils";
 import { sequelizeConnection } from './config'
 
 
 export interface GameAttr {
-    id: Number;
-    width: Number;
-    height: Number;
-    score: Number;
-    fruit: Json;
-    snake: Json;
+    id?: String;
+    width: number;
+    height: number;
+    score?: number;
+    fruit: object;
+    snake: object;
 }
 export interface GameCreateAttr extends Optional<GameAttr, 'id'> { }
-export class Game extends Model<GameAttr, GameCreateAttr> implements GameAttr {
-    public id!: Number;
-    public width!: Number;
-    public height!: Number;
-    public score!: Number;
-    public fruit!: Json;
-    public snake!: Json;
+export class Game extends Model<GameAttr, GameCreateAttr> {
+    declare id?: String;
+    declare width: number;
+    declare height: number;
+    declare score?: number;
+    declare fruit: object;
+    declare snake: object;
 }
 
 Game.init({
     id: {
-        allowNull: false,
-        autoIncrement: true,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
-        type: DataTypes.INTEGER
+        type: DataTypes.UUID
     },
     width: {
         type: DataTypes.INTEGER,
@@ -54,7 +53,6 @@ Game.init({
     createdAt: 'created_at',
     updatedAt: 'updated_at',
     sequelize: sequelizeConnection,
-    paranoid: true,
     freezeTableName: true,
     tableName: 'game'
 });
