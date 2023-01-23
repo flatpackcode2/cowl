@@ -1,4 +1,3 @@
-
 export declare namespace Board {
 
     interface State {
@@ -10,6 +9,15 @@ export declare namespace Board {
         snake: Snake;
     }
 
+    interface VelocityVector {
+        velX: -1 | 0 | 1;
+        velY: -1 | 0 | 1;
+    }
+
+    interface Moveset extends State {
+        ticks: VelocityVector[]
+    }
+
     interface Coordinates {
         x: number;
         y: number;
@@ -18,8 +26,5 @@ export declare namespace Board {
     interface Fruit extends Coordinates { }
 
 
-    interface Snake extends Coordinates {
-        velX: -1 | 0 | 1;
-        velY: -1 | 0 | 1;
-    }
+    interface Snake extends Coordinates, VelocityVector { }
 }

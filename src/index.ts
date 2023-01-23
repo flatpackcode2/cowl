@@ -1,6 +1,7 @@
 import express, { ErrorRequestHandler } from "express";
 import logger from 'morgan';
 const boardRouter = require('./api/routes/board');
+const validatorRouter = require('./api/routes/validator')
 
 const app = express();
 const port = 1337
@@ -26,6 +27,7 @@ app.get('/', async (req, res) => {
 })
 
 app.use('/new', boardRouter)
+app.use('/validate', validatorRouter)
 
 app.listen(port, () => {
     console.log(`App running on port ${port}`)
