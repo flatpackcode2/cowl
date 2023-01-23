@@ -4,7 +4,7 @@ const boardRouter = require('./api/routes/board');
 const validatorRouter = require('./api/routes/validator')
 
 const app = express();
-const port = 1337
+const port = 1337;
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -18,13 +18,7 @@ app.use(function (err, req, res, next) {
 
     // render the error page
     res.status(err.status || 500);
-    res.render('error');
 } as ErrorRequestHandler);
-
-app.get('/', async (req, res) => {
-    console.log('rrrr')
-    res.send('OK, this works, right?')
-})
 
 app.use('/new', boardRouter)
 app.use('/validate', validatorRouter)

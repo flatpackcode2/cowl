@@ -1,19 +1,17 @@
 import { DataTypes, Model, Optional, Sequelize } from "sequelize";
-import { Json } from "sequelize/types/utils";
 import { sequelizeConnection } from './config'
 
 
 export interface GameAttr {
-    id?: String;
+    id: string;
     width: number;
     height: number;
     score?: number;
     fruit: object;
     snake: object;
 }
-export interface GameCreateAttr extends Optional<GameAttr, 'id'> { }
-export class Game extends Model<GameAttr, GameCreateAttr> {
-    declare id?: String;
+export class Game extends Model<GameAttr, Optional<GameAttr, 'id'>> {
+    declare id?: string;
     declare width: number;
     declare height: number;
     declare score?: number;

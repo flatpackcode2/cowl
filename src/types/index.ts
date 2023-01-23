@@ -10,8 +10,8 @@ export declare namespace Board {
     }
 
     interface VelocityVector {
-        velX: -1 | 0 | 1;
-        velY: -1 | 0 | 1;
+        velX: number;
+        velY: number;
     }
 
     interface Moveset extends State {
