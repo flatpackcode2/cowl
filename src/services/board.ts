@@ -21,7 +21,7 @@ export class Board {
             fruit: this.generateNewFruitPosition({ w, h, snake: defaultSnakeStart }),
             snake: defaultSnakeStart
         })
-        return game
+        return game;
     }
 
     public generateNewFruitPosition = (args: {

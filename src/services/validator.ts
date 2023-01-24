@@ -2,16 +2,26 @@ import { Board } from "../types";
 import _ from 'lodash';
 export class Validator {
 
-    public validate = (state: Board.Moveset) => {
+    public validate = (state: {
+        snake: Board.Snake,
+        fruit: Board.Fruit,
+        ticks: Board.VelocityVector[],
+        height: number,
+        width: number
+    }) => {
         const { snake, fruit, ticks, width, height } = state;
 
         const snakeIsOnFruit = this.checkThatSnakeFinishesAtFruit(snake, fruit, ticks);
         const snakeWithinBoundaries = this.checkThatSnakeIsWithinBoundaries(snake, ticks, width, height);
         const noAbruptDirectionChange = this.checkThatThereIsNoAbruptChangeInDirection(snake, ticks);
 
+        console.log(
+            snakeIsOnFruit, snakeWithinBoundaries, noAbruptDirectionChange
+        )
+
         return snakeIsOnFruit && snakeWithinBoundaries && noAbruptDirectionChange
     }
-    
+
     private checkThatSnakeFinishesAtFruit = (
         snake: Board.Snake,
         fruit: Board.Fruit,
@@ -23,6 +33,8 @@ export class Validator {
         const verticalSteps = ticks.reduce((a, c) => {
             return a + c.velY;
         }, 0)
+
+        console.log({ horizontalSteps, verticalSteps, snakeX: snake.x, snakeY: snake.y, fruitX: fruit.x, fruitY: fruit.y })
 
         return (snake.x + horizontalSteps) === fruit.x && (snake.y + verticalSteps) === fruit.y
 
