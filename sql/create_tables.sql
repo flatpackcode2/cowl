@@ -1,6 +1,3 @@
--- CREATE DATABASE local_db;
--- USE local_db;
-
 \connect local_db
 
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
