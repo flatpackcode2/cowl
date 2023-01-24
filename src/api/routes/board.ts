@@ -22,15 +22,15 @@ boardRouter.get('/', async (req, res) => {
         if (!result.error) {
             const { w, h } = data;
             if (typeof w === 'string' && typeof h === 'string') {
-                const board = new Board(new Game())
-                const game = await board.create(w, h);
-                res.status(201).json({ game: game.toJSON() });
+                const board = new Board()
+                const game = await board.create({ w: parseInt(w), h: parseInt(h) });
+                res.status(200).json({ game: game.toJSON() });
             }
         }
 
     } catch (err) {
         console.log(err)
-        res.send(null)
+        res.status(500).json({ error: 'Something went wrong.' })
     }
 })
 

@@ -1,22 +1,22 @@
 import { DataTypes, Model, Optional, Sequelize } from "sequelize";
 import { sequelizeConnection } from './config'
-
+import { Board } from "../types";
 
 export interface GameAttr {
     id: string;
     width: number;
     height: number;
     score?: number;
-    fruit: object;
-    snake: object;
+    fruit: Board.Fruit;
+    snake: Board.Snake;
 }
 export class Game extends Model<GameAttr, Optional<GameAttr, 'id'>> {
     declare id?: string;
     declare width: number;
     declare height: number;
     declare score?: number;
-    declare fruit: object;
-    declare snake: object;
+    declare fruit: Board.Fruit;
+    declare snake: Board.Snake;
 }
 
 Game.init({

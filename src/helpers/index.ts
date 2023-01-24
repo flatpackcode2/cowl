@@ -1,4 +1,6 @@
-import Joi from 'joi'
+import Joi from 'joi';
+import { Board } from '../types';
+
 export const generateRandomPosition = (length: number) => {
     return Math.floor(Math.random() * length)
 }
@@ -29,5 +31,8 @@ export const generateErrorObject = (errorArray: {
     }, {})
 
     return errorObject;
+}
 
+export const getLastTick = (ticks: Board.VelocityVector[]) => {
+    return ticks.slice(ticks.length - 1)[0];
 }

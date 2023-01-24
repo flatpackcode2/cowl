@@ -1,19 +1,16 @@
 import { Router } from 'express';
 import { Game } from '../../models';
-import { generateRandomPosition } from '../../helpers';
+import { generateRandomPosition, getLastTick } from '../../helpers';
 import { Validator } from '../../services/validator';
 import _ from 'lodash';
+import { Board } from '../../services/board';
 
 const validatorRouter = Router();
 
 validatorRouter.post('/', async (req, res) => {
 
     try {
-
-        // const joi validation
-
         const validationService = new Validator();
-        console.log('req.body', req.body)
         const moveSet = req.body;
         const id: string = _.get(moveSet, 'gameId'); // guard against no id
         const game = await Game.findOne({ where: { id } })
@@ -21,33 +18,34 @@ validatorRouter.post('/', async (req, res) => {
             res.status(400).json({ message: 'Invalid game id' })
             return; // check for error codes - this seems wrong
         }
-        /**
-         * improvements
-         * 1. check that game id exists before creating
-         * 2. update it with incremented score, new fruit position and new snake position
-         * 3. keep snake position as last move from valid moveset
-         * 4. add joi validation
-         * 5. data shape:{
-         *     gameId: string,
-         *     ticks:
-         * }
-         */
+
         const isValid = validationService.validate(req.body); // this is bad. replace this with joi validated data
         if (isValid) {
             let score = game?.score || 0; // why is score possibly undefined?
             score++;
             game.score = score;
-            game.fruit = {
-                x: generateRandomPosition(game.width),
-                y: generateRandomPosition(game.height)
-            };
-            // TODO: assign last step in ticks to snake.
-
+            const board = new Board();
+            const lastVelVector = getLastTick(moveSet.ticks);
+            const oldFruitPosition = game.fruit;
+            const snake = {
+                x: oldFruitPosition.x,
+                y: oldFruitPosition.y,
+                velX: lastVelVector.velX,
+                velY: lastVelVector.velY
+            }
+            game.fruit = board.generateNewFruitPosition({
+                w: game.width,
+                h: game.height,
+                snake,
+            });
+            game.snake = snake;
+            await game.save();
+            res.status(200).json(game.toJSON());
         }
-        res.send('ok');
 
     } catch (err) {
-        console.log(err)
+        console.log(err);
+        res.status(500).json({ error: 'Something went wrong' })
     }
 })
 

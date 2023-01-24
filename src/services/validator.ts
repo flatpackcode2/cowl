@@ -8,13 +8,10 @@ export class Validator {
         const snakeIsOnFruit = this.checkThatSnakeFinishesAtFruit(snake, fruit, ticks);
         const snakeWithinBoundaries = this.checkThatSnakeIsWithinBoundaries(snake, ticks, width, height);
         const noAbruptDirectionChange = this.checkThatThereIsNoAbruptChangeInDirection(snake, ticks);
+
         return snakeIsOnFruit && snakeWithinBoundaries && noAbruptDirectionChange
     }
-
-    public validateParams = (state: Board.Moveset) => {
-
-    }
-
+    
     private checkThatSnakeFinishesAtFruit = (
         snake: Board.Snake,
         fruit: Board.Fruit,
@@ -58,9 +55,9 @@ export class Validator {
         snake: Board.Snake,
         ticks: Board.VelocityVector[]) => {
 
-        const { x, y } = snake;
+        ticks.unshift({ velX: snake.velX, velY: snake.velY })
 
-        // check for x exceeding boundaries
+        // check for changing directions
         for (let i = 0; i < ticks.length - 1; i++) {
             let curr = ticks[i];
             let next = ticks[i + 1]

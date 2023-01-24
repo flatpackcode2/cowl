@@ -1,30 +1,48 @@
 import { Game } from "../models"
 import { generateRandomPosition } from "../helpers";
+import { Board as BoardType } from "../types";
 export class Board {
 
     private game: Game;
 
-    constructor(game: Game) {
-        this.game = game;
+    constructor() {
+        this.game = new Game();
     }
 
-    public create = async (w: string, h: string) => {
+    public create = async (args: {
+        w: number;
+        h: number;
+    }) => {
+        const { w, h } = args;
+        const defaultSnakeStart = { x: 0, y: 0, velX: 1, velY: 0 }
         const game = await Game.create({
-            width: parseInt(w),
-            height: parseInt(h),
-            fruit: {
-                x: generateRandomPosition(parseInt(w)),
-                y: generateRandomPosition(parseInt(h))
-            },
-            snake: { x: 0, y: 0, velX: 1, velY: 0 }
+            width: w,
+            height: h,
+            fruit: this.generateNewFruitPosition({ w, h, snake: defaultSnakeStart }),
+            snake: defaultSnakeStart
         })
-        console.log('game', game)
         return game
     }
 
-    public validateParams = (params: { w: number, h: number }) => {
+    public generateNewFruitPosition = (args: {
+        w: number;
+        h: number;
+        snake: BoardType.Snake;
+    }) => {
+
+        const { w, h, snake } = args;
+
+        let x = snake.x;
+        let y = snake.y;
+
+        while (x === snake.x && y === snake.y) {
+            x = generateRandomPosition(w);
+            y = generateRandomPosition(h)
+        }
+
+        console.log('generated fruit position', { x, y })
+        return { x, y }
 
     }
-
 
 }
