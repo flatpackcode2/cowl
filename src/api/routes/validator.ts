@@ -49,6 +49,9 @@ validatorRouter.post('/', async (req, res) => {
             });
             game.snake = snake;
             await game.save();
+            const response = game.get({plain:true});
+            delete response.updated_at;
+            delete response.created_at;
             res.status(200).json(game.toJSON());
         } else {
             res.status(400).json({

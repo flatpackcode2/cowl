@@ -47,9 +47,7 @@ Game.init({
         type: DataTypes.JSONB,
     },
 }, {
-    timestamps: true,
-    createdAt: 'created_at',
-    updatedAt: 'updated_at',
+    timestamps: false,
     sequelize: sequelizeConnection,
     freezeTableName: true,
     tableName: 'game'
