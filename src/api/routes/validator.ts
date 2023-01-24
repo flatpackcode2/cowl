@@ -2,15 +2,25 @@ import { Router } from 'express';
 import { Game } from '../../models';
 import { generateRandomPosition } from '../../helpers';
 import { Validator } from '../../services/validator';
+import _ from 'lodash';
 
 const validatorRouter = Router();
 
-validatorRouter.post('/', (req, res) => {
+validatorRouter.post('/', async (req, res) => {
 
     try {
 
+        // const joi validation
+
         const validationService = new Validator();
         console.log('req.body', req.body)
+        const moveSet = req.body;
+        const id: string = _.get(moveSet, 'gameId'); // guard against no id
+        const game = await Game.findOne({ where: { id } })
+        if (!game) {
+            res.status(400).json({ message: 'Invalid game id' })
+            return; // check for error codes - this seems wrong
+        }
         /**
          * improvements
          * 1. check that game id exists before creating
@@ -23,12 +33,17 @@ validatorRouter.post('/', (req, res) => {
          * }
          */
         const isValid = validationService.validate(req.body); // this is bad. replace this with joi validated data
-        const game = Game.create({
-            width: 100,
-            height: 100,
-            fruit: { x: generateRandomPosition(100), y: generateRandomPosition(100) },
-            snake: { x: 0, y: 0, velX: 1, velY: 0 }
-        })
+        if (isValid) {
+            let score = game?.score || 0; // why is score possibly undefined?
+            score++;
+            game.score = score;
+            game.fruit = {
+                x: generateRandomPosition(game.width),
+                y: generateRandomPosition(game.height)
+            };
+            // TODO: assign last step in ticks to snake.
+
+        }
         res.send('ok');
 
     } catch (err) {
