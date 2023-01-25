@@ -29,8 +29,6 @@ const gameSchema = Joi.object({
 })
 
 validatorRouter.all('/', (req, res) => {
-
-    console.log('===reg', req)
     if (req.method !== 'POST') {
         res.set('Allow', 'POST')
         res.status(405).json({ message: 'Method not allowed' });
