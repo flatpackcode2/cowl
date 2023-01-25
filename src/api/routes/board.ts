@@ -2,7 +2,6 @@ import { Router } from 'express';
 import { Board } from '../../services/board';
 import Joi from 'joi';
 import { generateErrorObject } from '../../helpers';
-import { restful } from '../../middlewares';
 
 const boardRouter = Router();
 
