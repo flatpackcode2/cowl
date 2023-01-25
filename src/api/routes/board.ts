@@ -10,7 +10,7 @@ const newGameSchema = Joi.object({
     h: Joi.string().pattern(new RegExp(`^[1-9][0-9]*$`)).required(),
 })
 
-boardRouter.all('/', async (req, res) => {
+boardRouter.all('/', (req, res) => {
     if (req.method !== 'GET') {
         res.set('Allow', 'GET')
         res.status(405).send('Method not allowed');
@@ -27,8 +27,8 @@ boardRouter.all('/', async (req, res) => {
             const { w, h } = data;
             if (typeof w === 'string' && typeof h === 'string') {
                 const board = new Board()
-                const game = await board.create({ w: parseInt(w), h: parseInt(h) });
-                res.status(200).json({ game: game.toJSON() });
+                const game = board.create({ w: parseInt(w), h: parseInt(h) });
+                res.status(200).json({ ...game });
             }
         }
 

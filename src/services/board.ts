@@ -1,6 +1,7 @@
 import { Game } from "../models"
 import { generateRandomPosition } from "../helpers";
 import { Board as BoardType } from "../types";
+import { randomUUID } from "crypto";
 export class Board {
 
     private game: Game;
@@ -9,18 +10,19 @@ export class Board {
         this.game = new Game();
     }
 
-    public create = async (args: {
+    public create = (args: {
         w: number;
         h: number;
     }) => {
         const { w, h } = args;
         const defaultSnakeStart = { x: 0, y: 0, velX: 1, velY: 0 }
-        const game = await Game.create({
+        const game = {
+            id: randomUUID(),
             width: w,
             height: h,
             fruit: this.generateNewFruitPosition({ w, h, snake: defaultSnakeStart }),
             snake: defaultSnakeStart
-        })
+        }
         return game;
     }
 

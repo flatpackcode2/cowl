@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { Game } from '../../models';
 import { getLastTick } from '../../helpers';
 import { Validator } from '../../services/validator';
 import _ from 'lodash';
@@ -9,34 +8,30 @@ const validatorRouter = Router();
 
 validatorRouter.all('/', async (req, res) => {
 
-    try {
-        if (req.method !== 'POST') {
-            res.set('Allow', 'POST')
-            res.status(405).send('Method not allowed');
-            return
-        }
 
-        const validationService = new Validator();
-        const body = req.body;
-        const id: string = _.get(body, 'gameId');
-        const game = await Game.findOne({ where: { id } })
-        if (!game) {
-            res.status(400).json({ message: 'Invalid game id' })
-            return;
-        }
+    if (req.method !== 'POST') {
+        res.set('Allow', 'POST')
+        res.status(405).json({ message: 'Method not allowed' });
+        return
+    }
+
+    const validationService = new Validator();
+    const body = req.body;
+
+    try {
 
         const moveSet = {
-            width: game.width,
-            height: game.height,
-            fruit: game.fruit,
-            snake: game.snake,
+            width: body.width,
+            height: body.height,
+            fruit: body.fruit,
+            snake: body.snake,
             ticks: body.ticks,
         }
 
         const isValid = validationService.validate(moveSet);
 
         if (isValid.valid) {
-            const response = validationService.incrementScore(game, getLastTick(req.body));
+            const response = validationService.incrementScore(body, getLastTick(body));
             res.status(200).json(response);
 
         } else if (isValid.error) {
@@ -48,7 +43,7 @@ validatorRouter.all('/', async (req, res) => {
 
     } catch (err) {
         console.log(err);
-        res.status(500).json({ error: 'Something went wrong' })
+        res.status(500).json({ message: 'Something went wrong' })
     }
 })
 
