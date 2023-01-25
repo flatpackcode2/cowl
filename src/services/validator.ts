@@ -2,7 +2,7 @@ import { Board } from "../types";
 import { Board as BoardService } from "./board";
 import _ from 'lodash';
 import { ERROR_CODE, ERROR_MESSAGE } from "../constants";
-import { Game } from "../models";
+import { getLastTick } from "./helpers";
 export class Validator {
 
     public validate = (state: {
@@ -20,7 +20,6 @@ export class Validator {
     } => {
         const { snake, fruit, ticks, width, height } = state;
 
-        // break up logic and return http status codes for where condition fails instead of just boolean;
         const stepSizeIsValid = this.stepSizeIsValid(ticks);
         if (!stepSizeIsValid) {
             return {
@@ -110,9 +109,11 @@ export class Validator {
     private stepSizeIsValid = (
         ticks: Board.VelocityVector[]) => {
 
-        const found = ticks.find(el => el.velX > 1 || el.velX < -1 || el.velY > 1 || el.velY < -1)
+        const hasDiagonal = ticks.some(el => el.velX !== 0 && el.velY !== 0)
 
-        return !Boolean(found);
+        const badStepSize = ticks.some(el => el.velX > 1 || el.velX < -1 || el.velY > 1 || el.velY < -1)
+
+        return !badStepSize && !hasDiagonal;
     }
 
     private checkThatThereIsNoAbruptChangeInDirection = (
@@ -134,29 +135,27 @@ export class Validator {
         return true;
     }
 
-    public incrementScore = async (game: Game, lastTick: Board.VelocityVector) => {
-        let score = game.score;
+    public incrementScore = (game: Board.Moveset) => {
+        const copy = _.cloneDeep(game)
+        const lastTick = getLastTick(copy.ticks)
+        let score = copy.score;
         score++;
-        game.score = score;
+        copy.score = score;
         const board = new BoardService();
-        const oldFruitPosition = game.fruit;
+        const oldFruitPosition = copy.fruit;
         const snake = {
             x: oldFruitPosition.x,
             y: oldFruitPosition.y,
             velX: lastTick.velX,
             velY: lastTick.velY
         }
-        game.fruit = board.generateNewFruitPosition({
-            w: game.width,
-            h: game.height,
+        copy.fruit = board.generateNewFruitPosition({
+            w: copy.width,
+            h: copy.height,
             snake,
         });
-        game.snake = snake;
-        await game.save();
-        const gameData = game.get({ plain: true });
-        const response = { gameId: gameData.id, ...gameData } as Partial<Game>;
-        delete response.id;
+        copy.snake = snake;
 
-        return response;
+        return copy;
     }
 }

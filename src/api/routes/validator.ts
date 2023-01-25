@@ -1,42 +1,68 @@
 import { Router } from 'express';
-import { Game } from '../../models';
-import { getLastTick } from '../../helpers';
 import { Validator } from '../../services/validator';
 import _ from 'lodash';
 import { ERROR_CODE_TO_HTTP_STATUS } from '../../constants';
+import { generateErrorObject } from '../../services/helpers';
+import Joi from 'joi';
 
 const validatorRouter = Router();
 
-validatorRouter.all('/', async (req, res) => {
+const gameSchema = Joi.object({
+    gameId: Joi.string(),
+    width: Joi.number().integer().required().min(2),
+    height: Joi.number().integer().required().min(2),
+    score: Joi.number().integer().required(),
+    fruit: Joi.object({
+        x: Joi.number().integer().required(),
+        y: Joi.number().integer().required(),
+    }),
+    snake: Joi.object({
+        x: Joi.number().integer().required(),
+        y: Joi.number().integer().required(),
+        velX: Joi.number().integer().required(),
+        velY: Joi.number().integer().required(),
+    }),
+    ticks: Joi.array().items({
+        velX: Joi.number().integer().required(),
+        velY: Joi.number().integer().required(),
+    })
+})
+
+validatorRouter.all('/', (req, res) => {
+
+    console.log('===reg', req)
+    if (req.method !== 'POST') {
+        res.set('Allow', 'POST')
+        res.status(405).json({ message: 'Method not allowed' });
+        return
+    }
+
+    const body = req.body;
+    const result = gameSchema.validate(body, { abortEarly: false })
+
+
+
+    const validationService = new Validator();
+    if (result.error) {
+        const error = generateErrorObject(result.error.details)
+        res.status(400).json({ error })
+        return;
+    }
 
     try {
-        if (req.method !== 'POST') {
-            res.set('Allow', 'POST')
-            res.status(405).send('Method not allowed');
-            return
-        }
-
-        const validationService = new Validator();
-        const body = req.body;
-        const id: string = _.get(body, 'gameId');
-        const game = await Game.findOne({ where: { id } })
-        if (!game) {
-            res.status(400).json({ message: 'Invalid game id' })
-            return;
-        }
 
         const moveSet = {
-            width: game.width,
-            height: game.height,
-            fruit: game.fruit,
-            snake: game.snake,
+            width: body.width,
+            height: body.height,
+            fruit: body.fruit,
+            snake: body.snake,
             ticks: body.ticks,
         }
 
         const isValid = validationService.validate(moveSet);
 
         if (isValid.valid) {
-            const response = validationService.incrementScore(game, getLastTick(req.body));
+            const response = validationService.incrementScore(body);
             res.status(200).json(response);
 
         } else if (isValid.error) {
@@ -48,7 +74,7 @@ validatorRouter.all('/', async (req, res) => {
 
     } catch (err) {
         console.log(err);
-        res.status(500).json({ error: 'Something went wrong' })
+        res.status(500).json({ message: 'Something went wrong' })
     }
 })
 
