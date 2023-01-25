@@ -8,11 +8,13 @@ export const generateRandomPosition = (length: number) => {
 export const mapError = (type: string, key: string, value?: string) => {
     switch (type) {
         case `string.pattern.base`:
-            return `Invalid value of ${value} provided for ${key}. Please make sure it is a non-zero positive number`
+            return `Invalid value of ${value} provided for ${key}. Please make sure it is an integer greater than 1`;
         case `any.required`:
             return `Missing value ${key}`;
         case `object.unknown`:
             return `Unknown parameter ${key} provided`;
+        case `number.base`:
+            return `Invalid value of ${value} provided for ${key}. Please make sure it is an integer`;
         default:
             return `Invalid value provided for ${key}`;
     }
@@ -22,6 +24,7 @@ export const generateErrorObject = (errorArray: {
     type: string,
     context?: Joi.Context
 }[]) => {
+    console.log('errorArray', errorArray);
     const errorObject = errorArray.reduce((a, c) => {
         if (c.context && c.context.key) {
             const { value, key } = c.context;

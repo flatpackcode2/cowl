@@ -6,8 +6,8 @@ import { generateErrorObject } from '../../helpers';
 const boardRouter = Router();
 
 const newGameSchema = Joi.object({
-    w: Joi.string().pattern(new RegExp(`^[1-9][0-9]*$`)).required(),
-    h: Joi.string().pattern(new RegExp(`^[1-9][0-9]*$`)).required(),
+    w: Joi.string().pattern(new RegExp(`^[2-9]|[1-9][0-9]+$`)).required(),
+    h: Joi.string().pattern(new RegExp(`^[2-9]|[1-9][0-9]+$` )).required(),
 })
 
 boardRouter.all('/', (req, res) => {

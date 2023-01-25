@@ -20,7 +20,6 @@ export class Validator {
     } => {
         const { snake, fruit, ticks, width, height } = state;
 
-        // break up logic and return http status codes for where condition fails instead of just boolean;
         const stepSizeIsValid = this.stepSizeIsValid(ticks);
         if (!stepSizeIsValid) {
             return {
