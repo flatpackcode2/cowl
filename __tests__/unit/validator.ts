@@ -80,7 +80,6 @@ describe('validation test', () => {
         const val = new Validator();
         const response = val.incrementScore(validData);
         expect(response.score).toBe(validData.score+1)
-        console.log('response', response)
     });
 
     test('if moveset is invalid ie snake and fruit do not coincide, validate should return false', () => {
