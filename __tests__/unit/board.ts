@@ -3,7 +3,6 @@ describe('Board Service Test Suite', () => {
     test('Should create new board', () => {
         const board = new Board();
         const game = board.create({w:10,h:10});
-        console.log('game', game);
         expect(game).toHaveProperty('gameId');
         expect(game).toHaveProperty('width');
         expect(game).toHaveProperty('height');
