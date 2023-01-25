@@ -1,14 +1,8 @@
-import { Game } from "../models"
 import { generateRandomPosition } from "../helpers";
 import { Board as BoardType } from "../types";
-import { randomUUID } from "crypto";
+import { randomUUID } from 'crypto';
+
 export class Board {
-
-    private game: Game;
-
-    constructor() {
-        this.game = new Game();
-    }
 
     public create = (args: {
         w: number;
@@ -17,7 +11,7 @@ export class Board {
         const { w, h } = args;
         const defaultSnakeStart = { x: 0, y: 0, velX: 1, velY: 0 }
         const game = {
-            id: randomUUID(),
+            gameId: randomUUID(),
             width: w,
             height: h,
             fruit: this.generateNewFruitPosition({ w, h, snake: defaultSnakeStart }),

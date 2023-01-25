@@ -1,3 +1,4 @@
+import { getLastTick } from "../../src/helpers";
 import { Validator } from "../../src/services/validator";
 import { Board } from "../../src/types";
 
@@ -40,6 +41,46 @@ describe('validation test', () => {
         const val = new Validator();
         const isValid = val.validate(validData);
         expect(isValid.valid).toBe(true)
+    });
+
+    test('if moveset is valid, should increment', () => {
+        const validData: Board.Moveset = {
+            gameId: 'testId',
+            width: 250,
+            height: 250,
+            score: 0,
+            fruit: {
+                x: 5,
+                y: 10
+            },
+            snake: {
+                x: 0,
+                y: 0,
+                velX: 1,
+                velY: 0
+            },
+            ticks: [
+                { velX: 1, velY: 0 },
+                { velX: 1, velY: 0 },
+                { velX: 1, velY: 0 },
+                { velX: 1, velY: 0 },
+                { velX: 1, velY: 0 },
+                { velX: 0, velY: 1 },
+                { velX: 0, velY: 1 },
+                { velX: 0, velY: 1 },
+                { velX: 0, velY: 1 },
+                { velX: 0, velY: 1 },
+                { velX: 0, velY: 1 },
+                { velX: 0, velY: 1 },
+                { velX: 0, velY: 1 },
+                { velX: 0, velY: 1 },
+                { velX: 0, velY: 1 },
+            ]
+        }
+        const val = new Validator();
+        const response = val.incrementScore(validData);
+        expect(response.score).toBe(validData.score+1)
+        console.log('response', response)
     });
 
     test('if moveset is invalid ie snake and fruit do not coincide, validate should return false', () => {
@@ -193,7 +234,7 @@ describe('validation test', () => {
         };
         const val = new Validator();
         const isValid = val['checkThatSnakeIsWithinBoundaries'](invalidData.snake, invalidData.ticks, invalidData.width, invalidData.height)
-        expect(isValid).toBeFalsy();
+        expect(isValid).toBe(false);
     });
 
     test('velX values should be -1, 0 or 1', () => {
@@ -205,7 +246,7 @@ describe('validation test', () => {
         ]
         const val = new Validator();
         const isValid = val['stepSizeIsValid'](ticks);
-        expect(isValid).toBeFalsy();
+        expect(isValid).toBe(false);
     });
 
     test('velY values should be -1, 0 or 1', () => {
@@ -217,7 +258,16 @@ describe('validation test', () => {
         ]
         const val = new Validator();
         const isValid = val['stepSizeIsValid'](ticks);
-        expect(isValid).toBeFalsy();
+        expect(isValid).toBe(false);
+    });
+
+    test('should not allow diagonal movement', () => {
+        const ticks = [
+            { velX: 1, velY: 1 },
+        ]
+        const val = new Validator();
+        const isValid = val['stepSizeIsValid'](ticks);
+        expect(isValid).toBe(false);
     });
 
 

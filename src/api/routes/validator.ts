@@ -6,7 +6,7 @@ import { ERROR_CODE_TO_HTTP_STATUS } from '../../constants';
 
 const validatorRouter = Router();
 
-validatorRouter.all('/', async (req, res) => {
+validatorRouter.all('/', (req, res) => {
 
 
     if (req.method !== 'POST') {
@@ -31,7 +31,7 @@ validatorRouter.all('/', async (req, res) => {
         const isValid = validationService.validate(moveSet);
 
         if (isValid.valid) {
-            const response = validationService.incrementScore(body, getLastTick(body));
+            const response = validationService.incrementScore(body);
             res.status(200).json(response);
 
         } else if (isValid.error) {
