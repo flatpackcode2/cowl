@@ -14,6 +14,7 @@ export class Board {
             gameId: randomUUID(),
             width: w,
             height: h,
+            score:0,
             fruit: this.generateNewFruitPosition({ w, h, snake: defaultSnakeStart }),
             snake: defaultSnakeStart
         }
