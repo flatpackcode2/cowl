@@ -1,5 +1,7 @@
 import { Board } from "../types";
 import _ from 'lodash';
+import { ERROR_CODE, ERROR_MESSAGE } from "../constants";
+
 export class Validator {
 
     public validate = (state: {
@@ -8,18 +10,61 @@ export class Validator {
         ticks: Board.VelocityVector[],
         height: number,
         width: number
-    }) => {
+    }): {
+        valid: Boolean;
+        error?: {
+            code: number,
+            message: string
+        }
+    } => {
         const { snake, fruit, ticks, width, height } = state;
 
-        const snakeIsOnFruit = this.checkThatSnakeFinishesAtFruit(snake, fruit, ticks);
-        const snakeWithinBoundaries = this.checkThatSnakeIsWithinBoundaries(snake, ticks, width, height);
+        // break up logic and return http status codes for where condition fails instead of just boolean;
+        const stepSizeIsValid = this.stepSizeIsValid(ticks);
+        if (!stepSizeIsValid) {
+            return {
+                valid: false,
+                error: {
+                    code: ERROR_CODE.INVALID_STEP_SIZE,
+                    message: ERROR_MESSAGE[ERROR_CODE.INVALID_STEP_SIZE]
+                }
+            }
+        };
+
         const noAbruptDirectionChange = this.checkThatThereIsNoAbruptChangeInDirection(snake, ticks);
+        if (!noAbruptDirectionChange) {
+            return {
+                valid: false,
+                error: {
+                    code: ERROR_CODE.INVALID_180_TURN,
+                    message: ERROR_MESSAGE[ERROR_CODE.INVALID_180_TURN]
+                }
+            }
+        };
 
-        console.log(
-            snakeIsOnFruit, snakeWithinBoundaries, noAbruptDirectionChange
-        )
+        const snakeWithinBoundaries = this.checkThatSnakeIsWithinBoundaries(snake, ticks, width, height);
+        if (!snakeWithinBoundaries) {
+            return {
+                valid: false,
+                error: {
+                    code: ERROR_CODE.SNAKE_OUT_OF_BOUNDS,
+                    message: ERROR_MESSAGE[ERROR_CODE.SNAKE_OUT_OF_BOUNDS]
+                }
+            }
+        };
 
-        return snakeIsOnFruit && snakeWithinBoundaries && noAbruptDirectionChange
+        const snakeIsOnFruit = this.checkThatSnakeFinishesAtFruit(snake, fruit, ticks);
+        if (!snakeIsOnFruit) {
+            return {
+                valid: false,
+                error: {
+                    code: ERROR_CODE.FRUIT_NOT_FOUND,
+                    message: ERROR_MESSAGE[ERROR_CODE.FRUIT_NOT_FOUND]
+                }
+            }
+        };
+
+        return { valid: true }
     }
 
     private checkThatSnakeFinishesAtFruit = (
@@ -34,7 +79,7 @@ export class Validator {
             return a + c.velY;
         }, 0)
 
-        console.log({ horizontalSteps, verticalSteps, snakeX: snake.x, snakeY: snake.y, fruitX: fruit.x, fruitY: fruit.y })
+        console.log({ horizontalSteps, verticalSteps })
 
         return (snake.x + horizontalSteps) === fruit.x && (snake.y + verticalSteps) === fruit.y
 
@@ -63,16 +108,25 @@ export class Validator {
         return true;
     }
 
+    private stepSizeIsValid = (
+        ticks: Board.VelocityVector[]) => {
+
+        const found = ticks.find(el => el.velX > 1 || el.velX < -1 || el.velY > 1 || el.velY < -1)
+
+        return !Boolean(found);
+    }
+
     private checkThatThereIsNoAbruptChangeInDirection = (
         snake: Board.Snake,
         ticks: Board.VelocityVector[]) => {
 
-        ticks.unshift({ velX: snake.velX, velY: snake.velY })
+        const copy = _.cloneDeep(ticks);
 
-        // check for changing directions
-        for (let i = 0; i < ticks.length - 1; i++) {
-            let curr = ticks[i];
-            let next = ticks[i + 1]
+        copy.unshift({ velX: snake.velX, velY: snake.velY })
+
+        for (let i = 0; i < copy.length - 1; i++) {
+            let curr = copy[i];
+            let next = copy[i + 1]
             if ((curr.velX !== 0 && curr.velX === -1 * next.velX)
                 || (curr.velY !== 0 && curr.velY === -1 * next.velY)) {
                 return false;

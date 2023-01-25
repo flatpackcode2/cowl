@@ -1,9 +1,10 @@
 import { Router } from 'express';
 import { Game } from '../../models';
-import { generateRandomPosition, getLastTick } from '../../helpers';
+import { getLastTick } from '../../helpers';
 import { Validator } from '../../services/validator';
 import _ from 'lodash';
 import { Board } from '../../services/board';
+import { ERROR_CODE_TO_HTTP_STATUS, ERROR_MESSAGE } from '../../constants';
 
 const validatorRouter = Router();
 
@@ -16,7 +17,7 @@ validatorRouter.post('/', async (req, res) => {
         const game = await Game.findOne({ where: { id } })
         if (!game) {
             res.status(400).json({ message: 'Invalid game id' })
-            return; // check for error codes - this seems wrong
+            return;
         }
 
         const moveSet = {
@@ -29,7 +30,7 @@ validatorRouter.post('/', async (req, res) => {
 
         const isValid = validationService.validate(moveSet); // this is bad. replace this with joi validated data
 
-        if (isValid) {
+        if (isValid.valid) {
             let score = game?.score || 0; // why is score possibly undefined?
             score++;
             game.score = score;
@@ -49,15 +50,13 @@ validatorRouter.post('/', async (req, res) => {
             });
             game.snake = snake;
             await game.save();
-            const response = game.get({plain:true});
-            delete response.updated_at;
-            delete response.created_at;
             res.status(200).json(game.toJSON());
-        } else {
-            res.status(400).json({
-                error: 'Fruit not found'
+        } else if (isValid.error) {
+            res.status(ERROR_CODE_TO_HTTP_STATUS[isValid.error.code]).json({
+                error: isValid.error.message
             })
         }
+        return;
 
     } catch (err) {
         console.log(err);
