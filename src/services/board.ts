@@ -1,4 +1,4 @@
-import { generateRandomPosition } from "../helpers";
+import { generateRandomPosition } from "./helpers";
 import { Board as BoardType } from "../types";
 import { randomUUID } from 'crypto';
 

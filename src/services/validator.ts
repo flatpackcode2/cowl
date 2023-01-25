@@ -2,7 +2,7 @@ import { Board } from "../types";
 import { Board as BoardService } from "./board";
 import _ from 'lodash';
 import { ERROR_CODE, ERROR_MESSAGE } from "../constants";
-import { getLastTick } from "../helpers";
+import { getLastTick } from "./helpers";
 export class Validator {
 
     public validate = (state: {

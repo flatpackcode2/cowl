@@ -1,4 +1,4 @@
-import { Board } from "../../src/services/board"
+import { Board } from "../board";
 describe('Board Service Test Suite', () => {
     test('Should create new board', () => {
         const board = new Board();

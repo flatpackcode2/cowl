@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { Validator } from '../../services/validator';
 import _ from 'lodash';
 import { ERROR_CODE_TO_HTTP_STATUS } from '../../constants';
-import { generateErrorObject } from '../../helpers';
+import { generateErrorObject } from '../../services/helpers';
 import Joi from 'joi';
 
 const validatorRouter = Router();
