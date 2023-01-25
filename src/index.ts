@@ -1,5 +1,6 @@
 import express, { ErrorRequestHandler } from "express";
 import logger from 'morgan';
+import { restful } from "./middlewares";
 const boardRouter = require('./api/routes/board');
 const validatorRouter = require('./api/routes/validator')
 

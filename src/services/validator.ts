@@ -1,7 +1,8 @@
 import { Board } from "../types";
+import { Board as BoardService } from "./board";
 import _ from 'lodash';
 import { ERROR_CODE, ERROR_MESSAGE } from "../constants";
-
+import { Game } from "../models";
 export class Validator {
 
     public validate = (state: {
@@ -79,8 +80,6 @@ export class Validator {
             return a + c.velY;
         }, 0)
 
-        console.log({ horizontalSteps, verticalSteps })
-
         return (snake.x + horizontalSteps) === fruit.x && (snake.y + verticalSteps) === fruit.y
 
     }
@@ -135,13 +134,29 @@ export class Validator {
         return true;
     }
 
-    private incrementScore = (state: Board.State) => {
-
-        const newState = _.cloneDeep(state).omit('ticks');
-        let score = _.get(newState, 'score', 0);
+    public incrementScore = async (game: Game, lastTick: Board.VelocityVector) => {
+        let score = game.score;
         score++;
-        newState.set(newState, 'score', score);
+        game.score = score;
+        const board = new BoardService();
+        const oldFruitPosition = game.fruit;
+        const snake = {
+            x: oldFruitPosition.x,
+            y: oldFruitPosition.y,
+            velX: lastTick.velX,
+            velY: lastTick.velY
+        }
+        game.fruit = board.generateNewFruitPosition({
+            w: game.width,
+            h: game.height,
+            snake,
+        });
+        game.snake = snake;
+        await game.save();
+        const gameData = game.get({ plain: true });
+        const response = { gameId: gameData.id, ...gameData } as Partial<Game>;
+        delete response.id;
 
-        return newState;
+        return response;
     }
 }

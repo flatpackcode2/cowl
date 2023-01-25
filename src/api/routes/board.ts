@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { Game } from '../../models';
 import { Board } from '../../services/board';
 import Joi from 'joi';
 import { generateErrorObject } from '../../helpers';
+import { restful } from '../../middlewares';
 
 const boardRouter = Router();
 
@@ -11,7 +11,12 @@ const newGameSchema = Joi.object({
     h: Joi.string().pattern(new RegExp(`^[1-9][0-9]*$`)).required(),
 })
 
-boardRouter.get('/', async (req, res) => {
+boardRouter.all('/', async (req, res) => {
+    if (req.method !== 'GET') {
+        res.set('Allow', 'GET')
+        res.status(405).send('Method not allowed');
+        return
+    }
     try {
         const data = req.query;
         const result = newGameSchema.validate(data, { abortEarly: false });

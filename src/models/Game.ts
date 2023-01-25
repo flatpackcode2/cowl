@@ -6,15 +6,22 @@ export interface GameAttr {
     id: string;
     width: number;
     height: number;
-    score?: number;
+    score: number;
     fruit: Board.Fruit;
     snake: Board.Snake;
 }
-export class Game extends Model<GameAttr, Optional<GameAttr, 'id'>> {
+
+export interface GameCreateAttr {
+    width: number;
+    height: number;
+    fruit: Board.Fruit;
+    snake: Board.Snake;
+}
+export class Game extends Model<GameAttr, GameCreateAttr> {
     declare id?: string;
     declare width: number;
     declare height: number;
-    declare score?: number;
+    declare score: number;
     declare fruit: Board.Fruit;
     declare snake: Board.Snake;
 }

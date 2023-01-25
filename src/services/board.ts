@@ -40,7 +40,6 @@ export class Board {
             y = generateRandomPosition(h)
         }
 
-        console.log('generated fruit position', { x, y })
         return { x, y }
 
     }

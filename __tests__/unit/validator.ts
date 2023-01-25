@@ -57,17 +57,7 @@ describe('validation test', () => {
             ticks: [
                 { velX: 1, velY: 0 },
                 { velX: 1, velY: 0 },
-                { velX: 1, velY: 0 },
-                { velX: 1, velY: 0 },
                 { velX: 0, velY: 0 },
-                { velX: 0, velY: 1 },
-                { velX: 0, velY: 1 },
-                { velX: 0, velY: 1 },
-                { velX: 0, velY: 1 },
-                { velX: 0, velY: 1 },
-                { velX: 0, velY: 1 },
-                { velX: 0, velY: 1 },
-                { velX: 0, velY: 1 },
                 { velX: 0, velY: 1 },
                 { velX: 0, velY: 1 },
             ]
