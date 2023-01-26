@@ -5,7 +5,7 @@
 2. Run `npm i` at the root of this directory to install all required packages.
 3. Run `npm run dev` at the root of this directory. This will start the server at (http://localhost:1337)
 4. The endpoints can be accessed at GET http://localhost:1337/new?w=[width]&h=[height] and POST http://localhost:1337/validate
-5. Tests can be run with npm run test
+5. Tests can be run with `npm run test`
 
 ## Improvements
 1. Ensured that fruit and snake never coincide when a game starts
